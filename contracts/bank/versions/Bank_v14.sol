@@ -4,8 +4,8 @@ pragma solidity >= 0.8.2;
 /// @custom:version owner can blacklist addresses from `deposit` and `withdraw`
 
 contract Bank {
-    mapping (address user => uint credit) credits;
-    mapping (address user => bool) l;
+    mapping (address user => uint credit) public credits;
+    mapping (address user => bool) public l;
     address public immutable owner; // owner of the contract
 
     constructor() {

@@ -4,7 +4,7 @@ pragma solidity >= 0.8.2;
 /// @custom:version maximum number of operations per block, and uses `transfer` instead of low-level call in `withdraw`.
 
 contract Bank {
-    mapping (address user => uint credit) credits;
+    mapping (address user => uint credit) public credits;
     uint public immutable opb = 15;
     uint public opsInCurrentBlock;
     uint public currentBlockNo;

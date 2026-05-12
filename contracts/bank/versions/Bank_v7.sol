@@ -4,7 +4,7 @@ pragma solidity >= 0.8.2;
 /// @custom:version `deposit` pays a unit fee to the owner
 
 contract Bank {
-    mapping (address user => uint credit) credits;
+    mapping (address user => uint credit) public credits;
     address public immutable owner; // owner of the contract
 
     constructor() {

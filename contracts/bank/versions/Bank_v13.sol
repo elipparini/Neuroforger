@@ -4,7 +4,7 @@ pragma solidity >= 0.8.2;
 /// @custom:version `deposit` transfers part of `msg.value` to the owner
 
 contract Bank {
-    mapping (address user => uint credit) credits;
+    mapping (address user => uint credit) public credits;
     address public immutable owner; // owner of the contract
 
     constructor() {

@@ -4,7 +4,7 @@ pragma solidity >= 0.8.2;
 /// @custom:version missing `require(success)` after low-level call in `withdraw`
 
 contract Bank {
-    mapping (address user => uint credit) credits;
+    mapping (address user => uint credit) public credits;
 
     function deposit() public payable {
         credits[msg.sender] += msg.value;

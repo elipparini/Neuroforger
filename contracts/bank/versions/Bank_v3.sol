@@ -4,7 +4,7 @@ pragma solidity >= 0.8.2;
 /// @custom:version `deposit` and `withdraw` limits for non-owner users, with owner exempt from limits; `withdraw` uses `transfer` instead of low-level call 
 
 contract Bank {
-    mapping (address user => uint credit) private credits;
+    mapping (address user => uint credit) public credits;
     address public immutable owner; // owner of the contract, exempt from limits
     uint public immutable opLimit;  // deposit & withdrawal limit (does not apply to the owner)
 
