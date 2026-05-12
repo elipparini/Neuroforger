@@ -17,7 +17,7 @@ contract BankTest is Test {
         bank = new Bank();
     }
     
-    function test_assets_dec_onlyif_deposit_violation() public {
+    function test_credits_dec_onlyif_withdraw_violation() public {
 
         abstract transaction[] txs;
 

@@ -4,8 +4,6 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../Bank.sol";
 
-// property: after a successful withdraw(amount), the balances of any user but the sender are preserved.
-
 abstract contracts[] cs;
 
 contract BankTest is Test {       
@@ -20,7 +18,7 @@ contract BankTest is Test {
     }
     
     
-    function test_withdraw_assets_credit_others_violation() public {
+    function test_deposit_assets_credit_others_violation() public {
 
         abstract transaction[] txs;
 
