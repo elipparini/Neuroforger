@@ -33,16 +33,14 @@ contract BankTest is Test {
         bank.deposit{value: n2}();
 
 
-        uint256 credits_slot = uint256(0);
-        bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
-        uint256 user_credits_pathA = uint256(vm.load(address(bank), user_credits_slot));
+        uint256 user_credits_pathA = bank.credits(user);
 
         vm.revertToState(snapshot);
 
         vm.prank(sender);
         bank.deposit{value: n1+n2}();
 
-        uint256 user_credits_pathB = uint256(vm.load(address(bank), user_credits_slot));
+        uint256 user_credits_pathB = bank.credits(user);
 
         assertNotEq(user_credits_pathB, user_credits_pathA, "Credits are equal");
     }

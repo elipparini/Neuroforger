@@ -25,14 +25,12 @@ contract BankTest is Test {
 
         abstract uint256 msg_value;
         abstract address sender;
-        uint256 credits_slot = uint256(0);
-        bytes32 sender_credits_slot = keccak256(abi.encode(sender, credits_slot));
-        uint256 sender_creditsBefore = uint256(vm.load(address(bank), sender_credits_slot));
+        uint256 sender_creditsBefore = bank.credits(sender);
 
         vm.prank(sender);
         bank.deposit{value: msg_value}(); // should not revert 
 	
-        uint256 sender_creditsAfter = uint256(vm.load(address(bank), sender_credits_slot));
+        uint256 sender_creditsAfter = bank.credits(sender);
 
         assertNotEq(sender_creditsAfter, sender_creditsBefore + msg_value, "sender credits did increase by msg.value");
     }

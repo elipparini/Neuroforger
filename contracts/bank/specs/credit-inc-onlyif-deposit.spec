@@ -24,7 +24,7 @@ contract BankTest is Test {
         abstract address user;
         assertNotEq(user, address(bank), "user address equal to bank address");
 
-        uint256 user_credits_before = uint256(vm.load(address(bank), keccak256(abi.encode(user, uint256(0)))));
+        uint256 user_credits_before = bank.credits(user);
 
         abstract address sender;
         vm.prank(sender);
@@ -38,7 +38,7 @@ contract BankTest is Test {
 	
         assert(function_selector != bank.deposit.selector || sender != user);
 
-        uint256 user_credits_after = uint256(vm.load(address(bank), keccak256(abi.encode(user, uint256(0)))));
+        uint256 user_credits_after = bank.credits(user);
         assertGt(user_credits_after, user_credits_before, "user credits did not increase");
     }
 }

@@ -25,16 +25,14 @@ contract BankTest is Test {
         abstract transaction[] txs;
 
 	    abstract address user;
-        uint256 credits_slot = uint256(0);
-        bytes32 user_credits_slot = keccak256(abi.encode(user, credits_slot));
-        uint256 user_creditsBefore = uint256(vm.load(address(bank), user_credits_slot));
+        uint256 user_creditsBefore = bank.credits(user);
 
         abstract uint256 amount;
         abstract address sender;
         vm.prank(sender);
         bank.withdraw(amount); // should not revert
 	
-        uint256 user_creditsAfter = uint256(vm.load(address(bank), user_credits_slot));
+        uint256 user_creditsAfter = bank.credits(user);
 
         assertNotEq(sender, user, "user equal to sender");
 
