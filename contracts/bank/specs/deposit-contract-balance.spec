@@ -4,6 +4,9 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../Bank.sol";
 
+//        "deposit-contract-balance": "after a non-reverting `deposit()`, the ETH balance of the contract is increased by `msg.value`.",
+ 
+
 abstract contracts[] cs;
 
 contract BankTest is Test {          
@@ -17,22 +20,21 @@ contract BankTest is Test {
     }
     
     
-    function test_deposit_assets_credit_others_violation() public {
+    function test_deposit_contract_balance() public {
 
         abstract transaction[] txs;
 
-	    abstract address user;
-        uint256 user_creditsBefore = bank.credits(user);
+        uint256 bank_balanceBefore = address(bank).balance;
 
         abstract uint256 msg_value;
         abstract address sender;
+        assertNotEq(sender, address(bank), "sender equal to bank");
+
         vm.prank(sender);
         bank.deposit{value: msg_value}(); // should not revert 
 	
-        uint256 user_creditsAfter = bank.credits(user);
+        uint256 bank_balanceAfter = address(bank).balance;
 
-        assertNotEq(sender, user, "user equal to sender");
-
-        assertNotEq(user_creditsBefore, user_creditsAfter, "user credits did not change");
+        assertNotEq(bank_balanceBefore + msg_value, bank_balanceAfter, "bank balance increased by msg.value");
     }
 }

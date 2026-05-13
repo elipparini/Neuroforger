@@ -17,22 +17,25 @@ contract BankTest is Test {
     }
     
     
-    function test_deposit_assets_credit_others_violation() public {
+    function test_deposit_assets_transfer_others_violation() public {
 
         abstract transaction[] txs;
 
 	    abstract address user;
-        uint256 user_creditsBefore = bank.credits(user);
+        assertNotEq(user, address(bank), "user equal to bank");
+
+        uint256 user_balanceBefore = user.balance;
+
 
         abstract uint256 msg_value;
         abstract address sender;
         vm.prank(sender);
         bank.deposit{value: msg_value}(); // should not revert 
 	
-        uint256 user_creditsAfter = bank.credits(user);
+        uint256 user_balanceAfter = user.balance;
 
         assertNotEq(sender, user, "user equal to sender");
 
-        assertNotEq(user_creditsBefore, user_creditsAfter, "user credits did not change");
+        assertNotEq(user_balanceBefore, user_balanceAfter, "user balance did not change");
     }
 }
