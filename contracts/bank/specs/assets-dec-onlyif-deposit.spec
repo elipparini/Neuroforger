@@ -6,15 +6,14 @@ import "../Bank.sol";
 
 abstract contracts[] cs;
 
-contract BankTest is Test {       
-    address immutable bank_deployer;      
+contract BankTest is Test {        
     Bank immutable bank;
     
     constructor() {
         // deploying a Bank contract
         abstract address bank_deployer;
         vm.prank(bank_deployer);
-        bank = new Bank();
+        bank = new Bank(abstract constructor_params);
     }
     
     function test_assets_dec_onlyif_deposit_violation() public {

@@ -13,7 +13,7 @@ contract BankTest is Test {
         // deploying a Bank contract
         abstract address bank_deployer;
         vm.prank(bank_deployer);
-        bank = new Bank();
+        bank = new Bank(abstract constructor_params);
     }
     
     

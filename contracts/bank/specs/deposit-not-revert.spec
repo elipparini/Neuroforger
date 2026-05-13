@@ -7,8 +7,7 @@ import "../Bank.sol";
 abstract contracts[] cs;
 
 
-contract BankTest is Test {
-    address immutable bank_deployer;      
+contract BankTest is Test {     
     Bank immutable bank;
     
     constructor() {
