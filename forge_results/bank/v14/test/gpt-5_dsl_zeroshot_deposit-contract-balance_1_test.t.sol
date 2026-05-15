@@ -1,0 +1,37 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+//        "deposit-contract-balance": "after a non-reverting `deposit()`, the ETH balance of the contract is increased by `msg.value`.",
+ 
+contract Dummy {}
+
+contract BankTest is Test {          
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        address bank_deployer = address(0xBEEF);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+    
+    
+    function test_deposit_contract_balance() public {
+
+        vm.deal(address(0x1111), 100 ether);
+
+        uint256 bank_balanceBefore = address(bank).balance;
+
+        uint256 msg_value = 1 ether;
+        address sender = address(0x1111);
+        assertNotEq(sender, address(bank), "sender equal to bank");
+
+        vm.prank(sender);
+        bank.deposit{value: msg_value}(); // should not revert 
+	
+        uint256 bank_balanceAfter = address(bank).balance;
+
+        assertEq(bank_balanceBefore + msg_value, bank_balanceAfter, "bank balance increased by msg.value");
+    }
+}

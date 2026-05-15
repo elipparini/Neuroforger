@@ -1,0 +1,21 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 533.72ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:BankTest
+[PASS] test_not_deposit_revert_violation() (gas: 7485)
+Traces:
+  [7485] BankTest::test_not_deposit_revert_violation()
+    ├─ [0] VM::deal(0x000000000000000000000000000000000000bEEF, 0)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001234)
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [314] Bank::deposit()
+    │   └─ ← [Revert] panic: arithmetic underflow or overflow (0x11)
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 353.72µs (67.89µs CPU time)
+
+Ran 1 test suite in 8.94ms (353.72µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

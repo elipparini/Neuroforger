@@ -1,0 +1,25 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 604.96ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_withdraw-assets-transfer-others_1_test.t.sol:BankTest
+[PASS] test_withdraw_assets_transfer_others_violation() (gas: 149025)
+Traces:
+  [168925] BankTest::test_withdraw_assets_transfer_others_violation()
+    ├─ [86377] → new Forwarder@0x0Fdd2DB793afC5B47937aC3B068F12349d2eDa29
+    │   ├─ [22700] Bank::deposit{value: 2}()
+    │   │   └─ ← [Stop]
+    │   └─ ← [Return] 267 bytes of code
+    ├─ [0] VM::prank(Forwarder: [0x0Fdd2DB793afC5B47937aC3B068F12349d2eDa29])
+    │   └─ ← [Return]
+    ├─ [40135] Bank::withdraw(1)
+    │   ├─ [32134] Forwarder::receive{value: 1}()
+    │   │   ├─ [0] 0x000000000000000000000000000000000000bEEF::fallback{value: 1}()
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 911.95µs (186.82µs CPU time)
+
+Ran 1 test suite in 14.32ms (911.95µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

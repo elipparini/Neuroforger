@@ -1,0 +1,33 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 570.21ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:BankTest
+[FAIL: call didn't revert at a lower depth than cheatcode call depth] test_not_deposit_revert_violation() (gas: 13876)
+Traces:
+  [13876] BankTest::test_not_deposit_revert_violation()
+    ├─ [0] VM::deal(0x000000000000000000000000000000000000dEaD, 0)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001234)
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [0] Bank::deposit{value: 1}()
+    │   └─ ← [OutOfFunds] EvmError: OutOfFunds
+    └─ ← [Revert] call didn't revert at a lower depth than cheatcode call depth
+
+Backtrace:
+  at Bank.deposit
+  at BankTest.test_not_deposit_revert_violation
+
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 332.49µs (85.11µs CPU time)
+
+Ran 1 test suite in 10.70ms (332.49µs CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:BankTest
+[FAIL: call didn't revert at a lower depth than cheatcode call depth] test_not_deposit_revert_violation() (gas: 13876)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

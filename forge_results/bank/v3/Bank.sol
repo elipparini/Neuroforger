@@ -3,7 +3,7 @@ pragma solidity >= 0.8.2;
 
 
 contract Bank {
-    mapping (address user => uint credit) private credits;
+    mapping (address user => uint credit) public credits;
     address public immutable owner; // owner of the contract, exempt from limits
     uint public immutable opLimit;  // deposit & withdrawal limit (does not apply to the owner)
 

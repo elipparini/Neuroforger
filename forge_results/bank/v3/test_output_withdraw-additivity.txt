@@ -1,0 +1,47 @@
+Compiling 2 files with Solc 0.8.30
+Solc 0.8.30 finished in 543.84ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_withdraw-additivity_1_test.t.sol:BankTest
+[PASS] test_withdraw_additivity_violation() (gas: 52038)
+Traces:
+  [70313] BankTest::test_withdraw_additivity_violation()
+    ├─ [0] VM::deal(0x0000000000000000000000000000000000001111, 100000000000000000000 [1e20])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001111)
+    │   └─ ← [Return]
+    ├─ [22623] Bank::deposit{value: 3000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001111)
+    │   └─ ← [Return]
+    ├─ [723] Bank::deposit{value: 3000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::snapshotState()
+    │   └─ ← [Return] 0
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001111)
+    │   └─ ← [Return]
+    ├─ [8077] Bank::withdraw(3000000000000000000 [3e18])
+    │   ├─ [0] 0x0000000000000000000000000000000000001111::fallback{value: 3000000000000000000}()
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001111)
+    │   └─ ← [Return]
+    ├─ [8077] Bank::withdraw(3000000000000000000 [3e18])
+    │   ├─ [0] 0x0000000000000000000000000000000000001111::fallback{value: 3000000000000000000}()
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    ├─ [867] Bank::credits(0x0000000000000000000000000000000000001111) [staticcall]
+    │   └─ ← [Return] 0
+    ├─ [0] VM::revertToState(0)
+    │   └─ ← [Return] true
+    ├─ [0] VM::prank(0x0000000000000000000000000000000000001111)
+    │   └─ ← [Return]
+    ├─ [745] Bank::withdraw(6000000000000000000 [6e18])
+    │   └─ ← [Revert] Amount exceeds operation limit
+    ├─ [867] Bank::credits(0x0000000000000000000000000000000000001111) [staticcall]
+    │   └─ ← [Return] 6000000000000000000 [6e18]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.34ms (243.53µs CPU time)
+
+Ran 1 test suite in 49.73ms (2.34ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

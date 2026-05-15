@@ -5,7 +5,7 @@ pragma solidity >= 0.8.2;
 import "./lib/ReentrancyGuard.sol";
 
 contract Bank is ReentrancyGuard {
-    mapping (address user => uint credit) credits;
+    mapping (address user => uint credit) public credits;
 
     function deposit() public payable nonReentrant {
         credits[msg.sender] += msg.value;

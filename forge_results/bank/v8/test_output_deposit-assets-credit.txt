@@ -1,0 +1,23 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 507.40ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-assets-credit_1_test.t.sol:BankTest
+[PASS] test_deposit_assets_credit_violation() (gas: 35959)
+Traces:
+  [35959] BankTest::test_deposit_assets_credit_violation()
+    ├─ [0] VM::deal(BankTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 100000000000000000000 [1e20])
+    │   └─ ← [Return]
+    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0x5ff10565516c110180bb9cc111cdbc2b0a68e09ff7fac17290373c3aa4a1bb03) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000000
+    ├─ [0] VM::prank(BankTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496])
+    │   └─ ← [Return]
+    ├─ [22516] Bank::deposit{value: 1000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::load(Bank: [0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d], 0x5ff10565516c110180bb9cc111cdbc2b0a68e09ff7fac17290373c3aa4a1bb03) [staticcall]
+    │   └─ ← [Return] 0x0000000000000000000000000000000000000000000000000000000000000000
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.31ms (303.29µs CPU time)
+
+Ran 1 test suite in 11.75ms (2.31ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

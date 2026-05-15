@@ -1,0 +1,28 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+/* no additional contracts */
+
+contract BankTest is Test {     
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        address bank_deployer = address(0xBEEF);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+
+    function test_not_deposit_revert_violation() public {
+        // no prior transactions
+
+        address user = address(0xAAAA);
+        
+        vm.prank(user);
+        uint256 msg_value = 1 ether; // user has 0 balance by default
+
+        vm.expectRevert();
+        bank.deposit{value: msg_value}();
+    }
+}

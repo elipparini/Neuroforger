@@ -1,19 +1,19 @@
-Compiler run failed:
-Warning (2519): This declaration shadows an existing declaration.
-  --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:13:9:
-   |
-13 |         address bank_deployer = address(0xBEEF);
-   |         ^^^^^^^^^^^^^^^^^^^^^
-Note: The shadowed declaration is here:
- --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:8:5:
-  |
-8 |     address immutable bank_deployer;      
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 544.35ms
+Compiler run successful!
 
-Error (6160): Wrong argument count for function call: 1 arguments given but expected 0.
-  --> test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:16:16:
-   |
-16 |         bank = new Bank(construct_params);
-   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-not-revert_1_test.t.sol:BankTest
+[PASS] test_not_deposit_revert_violation() (gas: 6752)
+Traces:
+  [6752] BankTest::test_not_deposit_revert_violation()
+    ├─ [0] VM::prank(0x000000000000000000000000000000000000cafE)
+    │   └─ ← [Return]
+    ├─ [0] VM::expectRevert(custom error 0xf4844814)
+    │   └─ ← [Return]
+    ├─ [336] Bank::deposit()
+    │   └─ ← [Revert] panic: arithmetic underflow or overflow (0x11)
+    └─ ← [Stop]
 
-Error: Compilation failed
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 343.48µs (59.37µs CPU time)
+
+Ran 1 test suite in 8.84ms (343.48µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

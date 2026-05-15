@@ -1,0 +1,33 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 568.43ms
+Compiler run successful with warnings:
+Warning (5159): "selfdestruct" has been deprecated. Note that, starting from the Cancun hard fork, the underlying opcode no longer deletes the code and data associated with an account and only transfers its Ether to the beneficiary, unless executed in the same transaction in which the contract was created (see EIP-6780). Any use in newly deployed contracts is strongly discouraged even if the new behavior is taken into account. Future changes to the EVM might further reduce the functionality of the opcode.
+  --> test/gpt-5_dsl_zeroshot_withdraw-assets-transfer-others_2_test.t.sol:12:9:
+   |
+12 |         selfdestruct(beneficiary);
+   |         ^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_withdraw-assets-transfer-others_2_test.t.sol:BankTest
+[PASS] test_withdraw_assets_transfer_others_violation() (gas: 171974)
+Traces:
+  [171974] BankTest::test_withdraw_assets_transfer_others_violation()
+    ├─ [63501] → new SelfDestructOnReceive@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 304 bytes of code
+    ├─ [0] VM::deal(SelfDestructOnReceive: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 2)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(SelfDestructOnReceive: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [22515] Bank::deposit{value: 2}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(SelfDestructOnReceive: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [38384] Bank::withdraw(1)
+    │   ├─ [30198] SelfDestructOnReceive::receive{value: 2}()
+    │   │   └─ ← [SelfDestruct]
+    │   └─ ← [Stop]
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 352.59µs (95.49µs CPU time)
+
+Ran 1 test suite in 11.18ms (352.59µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

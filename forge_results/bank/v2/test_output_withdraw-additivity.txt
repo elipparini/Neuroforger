@@ -1,0 +1,8 @@
+Compiler run failed:
+Error (8936): Identifier-start is not allowed at end of a number.
+  --> test/gpt-5_dsl_zeroshot_withdraw-additivity_1_test.t.sol:22:25:
+   |
+22 |         vm.deal(address(0xD0N0R), 1 ether);
+   |                         ^^^^
+
+Error: Compilation failed

@@ -1,0 +1,27 @@
+Compiling 21 files with Solc 0.8.30
+Solc 0.8.30 finished in 612.82ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_withdraw-contract-balance_1_test.t.sol:BankTest
+[PASS] test_withdraw_contract_balance() (gas: 106426)
+Traces:
+  [126326] BankTest::test_withdraw_contract_balance()
+    ├─ [47497] → new Reverter@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 237 bytes of code
+    ├─ [0] VM::deal(Reverter: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Reverter: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [22515] Bank::deposit{value: 1000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(Reverter: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [8814] Bank::withdraw(1000000000000000000 [1e18])
+    │   ├─ [327] Reverter::receive{value: 1000000000000000000}()
+    │   │   └─ ← [Revert] nope
+    │   └─ ← [Return] false
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.71ms (212.63µs CPU time)
+
+Ran 1 test suite in 47.93ms (2.71ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)

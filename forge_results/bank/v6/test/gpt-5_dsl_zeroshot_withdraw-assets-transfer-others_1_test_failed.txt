@@ -1,0 +1,54 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+// Concretization of `abstract contracts[] cs;`
+contract SelfDestructOnReceive {
+    address payable public beneficiary;
+    constructor(address payable _b) payable {
+        beneficiary = _b;
+    }
+    receive() external payable {
+        selfdestruct(beneficiary);
+    }
+}
+
+contract BankTest is Test {          
+    Bank immutable bank;
+    
+    constructor() {
+        // deploying a Bank contract
+        address bank_deployer = address(0xBEEF);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+    
+    
+    function test_withdraw_assets_transfer_others_violation() public {
+
+        // Concretization of `abstract transaction[] txs;`
+        // 1) Deploy a contract that selfdestructs to the zero address upon receiving ETH
+        SelfDestructOnReceive sd = new SelfDestructOnReceive(payable(address(0)));
+        // 2) Fund this test contract to be able to send ETH for deposit
+        vm.deal(address(this), 2);
+        // 3) Credit `sd` in the bank by depositing 2 wei as if from `sd`
+        vm.prank(address(sd));
+        bank.deposit{value: 2}();
+
+	    address user = address(0);
+        assertNotEq(user, address(bank), "user equal to bank");
+
+        uint256 user_balanceBefore = user.balance;
+
+        uint256 amount = 1;
+        address sender = address(sd);
+        vm.prank(sender);
+        bank.withdraw(amount); // should not revert 
+	
+        uint256 user_balanceAfter = user.balance;
+
+        assertNotEq(sender, user, "user equal to sender");
+
+        assertNotEq(user_balanceBefore, user_balanceAfter, "user balance did not change");
+    }
+}

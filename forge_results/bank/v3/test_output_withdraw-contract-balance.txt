@@ -1,0 +1,46 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 597.02ms
+Compiler run successful with warnings:
+Warning (5159): "selfdestruct" has been deprecated. Note that, starting from the Cancun hard fork, the underlying opcode no longer deletes the code and data associated with an account and only transfers its Ether to the beneficiary, unless executed in the same transaction in which the contract was created (see EIP-6780). Any use in newly deployed contracts is strongly discouraged even if the new behavior is taken into account. Future changes to the EVM might further reduce the functionality of the opcode.
+ --> test/gpt-5_dsl_zeroshot_withdraw-contract-balance_1_test.t.sol:8:9:
+  |
+8 |         selfdestruct(payable(msg.sender));
+  |         ^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_withdraw-contract-balance_1_test.t.sol:BankTest
+[FAIL: EvmError: Revert] test_withdraw_contract_balance() (gas: 98130)
+Traces:
+  [98130] BankTest::test_withdraw_contract_balance()
+    ├─ [18267] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 91 bytes of code
+    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [22623] Bank::deposit{value: 1000000000000000000}()
+    │   └─ ← [Stop]
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [10374] Bank::withdraw(1000000000000000000 [1e18])
+    │   ├─ [2300] Attacker::receive{value: 1000000000000000000}()
+    │   │   └─ ← [OutOfGas] EvmError: OutOfGas
+    │   └─ ← [Revert] EvmError: Revert
+    └─ ← [Revert] EvmError: Revert
+
+Backtrace:
+  at Attacker.receive
+  at Bank.withdraw
+  at BankTest.test_withdraw_contract_balance
+
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 2.14ms (119.83µs CPU time)
+
+Ran 1 test suite in 47.99ms (2.14ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/gpt-5_dsl_zeroshot_withdraw-contract-balance_1_test.t.sol:BankTest
+[FAIL: EvmError: Revert] test_withdraw_contract_balance() (gas: 98130)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test

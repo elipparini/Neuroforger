@@ -1,0 +1,30 @@
+pragma solidity ^0.8.13;
+import "forge-std/Test.sol";
+import "../Bank.sol";
+
+contract Dummy {}
+
+contract BankTest is Test {
+    Bank immutable bank;
+    
+    constructor() {
+        address bank_deployer = address(0xBEEF);
+        vm.prank(bank_deployer);
+        bank = new Bank();
+    }
+
+    function test_withdraw_revert_violation() public {
+        vm.deal(address(bank), 1 wei);
+
+        address user = address(0xA11CE);
+        
+        uint256 amount = 1;
+
+        uint256 user_creditsBefore = bank.credits(user);
+
+        assert(amount == 0 || amount > user_creditsBefore);
+                
+        vm.prank(user);
+        bank.withdraw(amount); 
+    }
+}

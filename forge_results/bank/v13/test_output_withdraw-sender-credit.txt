@@ -1,0 +1,37 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 540.91ms
+Compiler run successful!
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_withdraw-sender-credit_1_test.t.sol:BankTest
+[PASS] test_withdraw_sender_credit_violation() (gas: 217263)
+Traces:
+  [237163] BankTest::test_withdraw_sender_credit_violation()
+    ├─ [111267] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 443 bytes of code
+    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 11)
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [32161] Bank::deposit{value: 11}()
+    │   ├─ [0] 0x000000000000000000000000000000000000bEEF::fallback{value: 1}()
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    ├─ [845] Bank::credits(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f]) [staticcall]
+    │   └─ ← [Return] 10
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [43095] Bank::withdraw(10)
+    │   ├─ [34882] Attacker::receive{value: 10}()
+    │   │   ├─ [27661] Bank::deposit{value: 10}()
+    │   │   │   ├─ [0] 0x000000000000000000000000000000000000bEEF::fallback{value: 1}()
+    │   │   │   │   └─ ← [Stop]
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    ├─ [845] Bank::credits(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f]) [staticcall]
+    │   └─ ← [Return] 9
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 2.09ms (268.99µs CPU time)
+
+Ran 1 test suite in 12.49ms (2.09ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
