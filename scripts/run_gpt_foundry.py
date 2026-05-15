@@ -12,6 +12,7 @@ import time
 import pandas as pd
 import csv
 import shutil
+import difflib
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root del progetto
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
@@ -34,6 +35,20 @@ BEGIN FORGE OUTPUT
 {forge_output}
 END FORGE OUTPUT
 You have to fix your previous counterexample based on the Foundry output above to correctly demonstrate the property violation. All the constraints of the original prompt still apply. Provide the answer in the same format as before (i.e., with ANSWER:, EXPLANATION:, COUNTEREXAMPLE:)."""
+
+TYPE_CHECK_PROMPT = """You had being given the following prompt:
+BEGIN PREVIOUS PROMPT
+{prompt}
+END PREVIOUS PROMPT
+and you produced the following output:
+BEGIN PREVIOUS OUTPUT
+{output}
+END PREVIOUS OUTPUT
+However, your Forge test did not pass the manual type check. The user provided the following feedback:
+BEGIN USER FEEDBACK
+{user_feedback}
+END USER FEEDBACK
+You have to fix your previous counterexample based on the user feedback above to correctly demonstrate the property violation. All the constraints of the original prompt still apply. Provide the answer in the same format as before (i.e., with ANSWER:, EXPLANATION:, COUNTEREXAMPLE:)."""
 
 
 # Ensures text does not contain excessively long sequence of quotes
@@ -782,6 +797,7 @@ def main():
     parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
     parser.add_argument("--check_with_foundry",  action='store_true', required=False, default=False, help="Check returned PoC with Foundry.")
     parser.add_argument("--iteration_limit", type=int, default=3, help="Maximum number of iterations.")
+    parser.add_argument("--type_check", action='store_true', required=False, default=False, help="After forge passes, show a diff between the produced Forge test and the original specification and ask the user to confirm the type check.")
 
 
     args = parser.parse_args()
@@ -789,6 +805,9 @@ def main():
 
 
     if args.dsl_foundry:
+        args.check_with_foundry = True
+
+    if args.type_check:
         args.check_with_foundry = True
 
     if args.use_csv_verification_tasks and args.no_sample:
@@ -948,7 +967,43 @@ def main():
                             "raw_output": output
                         }
                     else:
-                        trying_to_solve = False
+                        if args.type_check:
+                            spec_path = os.path.join(CONTRACTS_DIR, contract_folder, f"specs/{prop}.spec")
+                            if os.path.exists(spec_path):
+                                with open(spec_path, "r", encoding="utf-8") as _spec_f:
+                                    spec_content = _spec_f.read()
+                                spec_label = f"specs/{prop}.spec"
+                            else:
+                                spec_content = load_property_description(contract_folder, prop)
+                                spec_label = f"property description ({prop})"
+                            sanitized_test = sanitize_PoC_for_forge(counterexample)
+                            diff_lines = list(difflib.unified_diff(
+                                spec_content.splitlines(keepends=True),
+                                sanitized_test.splitlines(keepends=True),
+                                fromfile=spec_label,
+                                tofile="produced_forge_test"
+                            ))
+                            diff_str = "".join(diff_lines)
+                            print("\n=== DIFF: Original Specification vs Produced Forge Test ===")
+                            print(diff_str if diff_str else "(no differences)")
+                            print("=== END DIFF ===\n")
+                            user_response = input('Type check: does the Forge test correctly implement the specification? [yes / no <explanation>]: ').strip()
+                            if user_response.lower().startswith("no"):
+                                user_feedback = user_response[2:].strip() or "(no explanation provided)"
+                                print(f"Type check failed. User feedback: {user_feedback}")
+                                new_prompt = TYPE_CHECK_PROMPT.replace("{prompt}", prompt).replace("{output}", output).replace("{user_feedback}", user_feedback)
+                                prompt = new_prompt
+                                iterations += 1
+                                if iterations > args.iteration_limit:
+                                    print(f"Reached iteration limit ({args.iteration_limit}) for ({prop}, {version}). Not requerying LLM anymore.")
+                                    trying_to_solve = False
+                                else:
+                                    print(f"Requerying LLM based on user type check feedback (iteration num. {iterations})")
+                                    # trying_to_solve remains True, loop continues
+                            else:
+                                trying_to_solve = False
+                        else:
+                            trying_to_solve = False
                 elif result_entry["llm_answer"] == "TRUE" or result_entry["llm_answer"] == "UNKNOWN":
                     trying_to_solve = False
                 else:
