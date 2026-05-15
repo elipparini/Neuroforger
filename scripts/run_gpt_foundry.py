@@ -21,6 +21,7 @@ API_KEY_FILE = os.path.join(SCRIPTS_DIR, "openai_api_key.txt")
 
 #FORGE_PATH = "/home/server/foundry/forge" 
 FORGE_PATH = "/home/enrico/.foundry/bin/forge"
+FORGE_RESULTS_DIR = os.path.join(BASE_DIR, "forge_results")
 
 REFINED_PROMPT = """You had being given the following prompt:
 BEGIN PREVIOUS PROMPT
@@ -600,7 +601,7 @@ def copy_imports_to_forge(contract, version):
     under the same relative path from the v<version> directory).
     """
     src_contract_path = get_contract_filepath(contract, version)
-    forge_dir = os.path.join('forge_results', contract, f'v{version}')
+    forge_dir = os.path.join(FORGE_RESULTS_DIR, contract, f'v{version}')
     os.makedirs(forge_dir, exist_ok=True)
 
     visited = set()
@@ -661,13 +662,13 @@ def copy_imports_to_forge(contract, version):
 
 def run_forge(contract, prop, version, counterexample, iterations, model, prompt_name):
     # Create (if not already existing) a folder ./forge_results/{contract}/{version}/test
-    base_folder = os.path.join("forge_results", contract, f"v{version}", "test")
+    base_folder = os.path.join(FORGE_RESULTS_DIR, contract, f"v{version}", "test")
     os.makedirs(base_folder, exist_ok=True)
 
     # Copy contract code to ./forge_results/{contract}/{version}/ without version in the filename
     contract_code = load_contract_code(contract, version)
     contract_name = get_contract_name(contract, version)
-    contract_file = os.path.join("forge_results", contract, f"v{version}", f"{contract_name}")
+    contract_file = os.path.join(FORGE_RESULTS_DIR, contract, f"v{version}", f"{contract_name}")
     with open(contract_file, "w", encoding="utf-8") as f:
         f.write(contract_code)
 
@@ -693,7 +694,7 @@ def run_forge(contract, prop, version, counterexample, iterations, model, prompt
     # save current working directory
     current_directory = os.getcwd()
     # change directory to run forge test
-    os.chdir(os.path.join('forge_results', contract, f'v{version}'))
+    os.chdir(os.path.join(FORGE_RESULTS_DIR, contract, f'v{version}'))
     
     #print current directory
     print(f"Current directory: {os.getcwd()}")
@@ -729,7 +730,7 @@ def run_forge(contract, prop, version, counterexample, iterations, model, prompt
     if has_pass and not has_fail_marker and not has_compilation_error:
         return True, test_output
 
-    base_test_dir = os.path.join("forge_results", contract, f"v{version}", "test")
+    base_test_dir = os.path.join(FORGE_RESULTS_DIR, contract, f"v{version}", "test")
 
     def rename_failing_tests():
         try:
