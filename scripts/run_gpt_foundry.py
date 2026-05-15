@@ -718,17 +718,23 @@ def run_forge(contract, prop, version, counterexample, iterations, model, prompt
     # return to previous working directory
     os.chdir(current_directory)
 
-    if "[PASS]" in test_output and "[FAIL: " not in test_output and "Error: Compiler" not in test_output:
-        return True, test_output
-    elif "[FAIL: " in test_output or "Error: Compiler" in test_output:
-        # Attempt to rename any test files referenced in the forge output to indicate failure.
-        # This is more robust than assuming the generated poc_file path always matches the
-        # file mentioned by the compiler/test runner (handles different sanitizations).
-        try:
-            base_test_dir = os.path.join("forge_results", contract, f"v{version}", "test")
+    # Determine pass / failure more robustly. Forge may report compilation
+    # failures using different phrases, so check a set of markers.
+    pass_marker = "[PASS]"
+    has_pass = pass_marker in test_output
+    has_fail_marker = re.search(r'\[FAIL\b', test_output) is not None
+    comp_err_markers = ["Error: Compiler", "Compilation failed", "Compiler run failed", "Error: Compilation failed"]
+    has_compilation_error = any(marker in test_output for marker in comp_err_markers)
 
-            # Find occurrences like "test/<filename>.t.sol" in forge output
-            found = re.findall(r'(?:test/)([^\s:]+?\.t\.sol)', test_output)
+    if has_pass and not has_fail_marker and not has_compilation_error:
+        return True, test_output
+
+    base_test_dir = os.path.join("forge_results", contract, f"v{version}", "test")
+
+    def rename_failing_tests():
+        try:
+            # Find occurrences like "test/<filename>.t.sol" or bare filenames in output.
+            found = re.findall(r'(?:test/)?([^\s:]+?\.t\.sol)', test_output)
             renamed_any = False
 
             for fname in set(found):
@@ -766,15 +772,51 @@ def run_forge(contract, prop, version, counterexample, iterations, model, prompt
                     try:
                         os.rename(poc_abs, dst)
                         print(f"Renamed generated test {poc_abs} -> {dst}")
+                        renamed_any = True
                     except Exception as e:
                         print(f"Warning: failed to rename test file {poc_abs}: {e}", file=sys.stderr)
                 else:
                     print(f"Warning: could not find test file to rename: {poc_abs}", file=sys.stderr)
+            return renamed_any
         except Exception as e:
             print(f"Warning: error while renaming failing tests: {e}", file=sys.stderr)
+            return False
+
+    # Known failure case -> rename failing tests and return False
+    if has_fail_marker or has_compilation_error:
+        rename_failing_tests()
         return False, test_output
+
+    # Ambiguous output: ask user to decide if the check passed.
+    print("\n=== Ambiguous Forge output: please inspect below ===")
+    print(test_output)
+    print("=== End of Forge output ===\n")
+
+    passed = None
+    try:
+        if sys.stdin and sys.stdin.isatty():
+            while True:
+                user_input = input("Does the Forge run indicate the test passed? [yes/no]: ").strip().lower()
+                if user_input in ("y", "yes"):
+                    passed = True
+                    break
+                elif user_input in ("n", "no"):
+                    passed = False
+                    break
+                else:
+                    print("Please answer 'yes' or 'no'.")
+        else:
+            # Non-interactive session: default to failure so the pipeline handles it.
+            print("Non-interactive session: treating ambiguous output as failure.")
+            passed = False
+    except Exception:
+        # If input fails for any reason, treat as failure.
+        passed = False
+
+    if passed:
+        return True, test_output
     else:
-        # Ambiguous output (neither clear pass nor known failure pattern)
+        rename_failing_tests()
         return False, test_output
 
 
