@@ -21,11 +21,11 @@ contracts/*/gpt-[45].csv
 scripts/openai_api_key.txt
 scripts/openai_api_keyOLD.txt
 scripts/claude_api_key.txt
-scripts/forge_results/*/v*/lib/*
-scripts/forge_results/*/v*/out/*
-scripts/forge_results/*/v*/README.md
-scripts/forge_results/*/v*/foundry.toml
-scripts/forge_results/*/v*/cache/*
+forge_results/*/v*/lib/*
+forge_results/*/v*/out/*
+forge_results/*/v*/README.md
+forge_results/*/v*/foundry.toml
+forge_results/*/v*/cache/*
 contracts/lending-protocol/forge/*
-scripts/forge_results/*OLD/*
+forge_results/*OLD/*
 scripts/logs_verification_tasks/*
