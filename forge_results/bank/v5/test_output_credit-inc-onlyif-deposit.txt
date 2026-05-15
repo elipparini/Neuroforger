@@ -1,0 +1,39 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 565.27ms
+Compiler run successful with warnings:
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_credit-inc-onlyif-deposit_2_test.t.sol:57:9:
+   |
+57 |         address(bank).call{value: msg_value}(abi.encodeWithSelector(function_selector, params));        
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_credit-inc-onlyif-deposit_2_test.t.sol:BankTest
+[PASS] test_credits_inc_onlyif_deposit_violation() (gas: 201161)
+Traces:
+  [201161] BankTest::test_credits_inc_onlyif_deposit_violation()
+    ├─ [111291] → new Attacker@0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f
+    │   └─ ← [Return] 443 bytes of code
+    ├─ [0] VM::deal(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f], 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [22700] Bank::deposit{value: 32}()
+    │   └─ ← [Stop]
+    ├─ [823] Bank::credits(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f]) [staticcall]
+    │   └─ ← [Return] 33
+    ├─ [0] VM::prank(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f])
+    │   └─ ← [Return]
+    ├─ [16022] Bank::withdraw(32)
+    │   ├─ [8021] Attacker::receive{value: 32}()
+    │   │   ├─ [800] Bank::deposit{value: 32}()
+    │   │   │   └─ ← [Stop]
+    │   │   └─ ← [Stop]
+    │   └─ ← [Stop]
+    ├─ [823] Bank::credits(Attacker: [0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f]) [staticcall]
+    │   └─ ← [Return] 34
+    └─ ← [Stop]
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 397.80µs (127.74µs CPU time)
+
+Ran 1 test suite in 8.82ms (397.80µs CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
