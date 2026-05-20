@@ -1,39 +1,18 @@
-
 pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../Bank.sol";
 
-// "credits-leq-balance": "the wei balance stored in the contract is greater than or equal to the sum of all the users' credits"
-
-// Mapping iteration problem: Solidity mappings are not iterable.
-// Solution using EVM state-diff recording, analogous to CVL's ghost + hook Sstore:
-//
-//   CVL:
-//     ghost mathint sum_credits { init_state axiom sum_credits==0; }
-//     hook Sstore credits[KEY address a] uint new_value (uint old_value) {
-//         sum_credits = sum_credits - old_value + new_value; }
-//     invariant credits_leq_balance() sum_credits <= nativeBalances[currentContract];
-//
-//   Foundry:
-//     vm.startStateDiffRecording() opens the recording window.
-//     vm.stopAndReturnStateDiff() returns every SSTORE with (previousValue, newValue).
-//     Summing (newValue - previousValue) for non-reverted writes to the bank's
-//     credits mapping slots reproduces sum_credits without ever enumerating addresses.
-//     The base storage slot of credits is discovered dynamically via stdstore so the
-//     spec is not tied to any particular Bank version's storage layout.
-//     Each write is verified to target credits[accessor] by recomputing the expected
-//     slot as keccak256(abi.encode(accessor, creditsBaseSlot)).
-
-abstract contracts[] cs;
+// Concretization of abstract contracts[]
+contract Dummy {}
 
 contract BankTest is Test {
     Bank immutable bank;
 
     constructor() {
         // deploying a Bank contract
-        abstract address bank_deployer;
+        address bank_deployer = address(0xBEEF);
         vm.prank(bank_deployer);
-        bank = new Bank(abstract constructor_params);
+        bank = new Bank();
     }
 
     // Helper: Dynamically locate the base storage slot of the credits mapping via vm.store/vm.load.
@@ -88,7 +67,8 @@ contract BankTest is Test {
         // Analogous to CVL initialising the ghost variable to 0 at deployment.
         vm.startStateDiffRecording();
 
-        abstract transaction[] txs;
+        // Concretization of abstract transaction[] txs;
+        bank.deposit{value: 0}();
 
         // Retrieve every SSTORE that occurred during txs.
         Vm.AccountAccess[] memory accesses = vm.stopAndReturnStateDiff();
