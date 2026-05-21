@@ -1,0 +1,39 @@
+Compiling 1 files with Solc 0.8.30
+Solc 0.8.30 finished in 521.44ms
+Compiler run successful with warnings:
+Warning (9302): Return value of low-level calls not used.
+  --> test/gpt-5_dsl_zeroshot_deposit-not-revert-int-or-ext_2_test.t.sol:51:9:
+   |
+51 |         address(bank).call{value: 1 wei, gas: 5000}(abi.encodeWithSelector(bank.deposit.selector));
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Ran 1 test for test/gpt-5_dsl_zeroshot_deposit-not-revert-int-or-ext_2_test.t.sol:BankTest
+[FAIL: panic: assertion failed (0x01)] test_deposit_not_revert_int_or_ext_violation() (gas: 36299)
+Traces:
+  [36299] BankTest::test_deposit_not_revert_int_or_ext_violation()
+    ├─ [0] VM::startStateDiffRecording()
+    │   └─ ← [Return]
+    ├─ [0] VM::deal(BankTest: [0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496], 1000000000000000000 [1e18])
+    │   └─ ← [Return]
+    ├─ [7300] Bank::deposit{value: 1}()
+    │   └─ ← [OutOfGas] EvmError: OutOfGas
+    ├─ [0] VM::stopAndReturnStateDiff()
+    │   └─ ← [Return] [((0, 31337 [3.133e4]), 8, 0x7109709ECfa91a80626fF3989D68f67F5b1DD12D, 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, true, 0, 0, 0x, 0, 0x, false, [], 1, 0, 0), ((0, 31337 [3.133e4]), 0, 0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d, 0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496, true, 0, 0, 0x, 1, 0xd0e30db0, false, [(0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d, 0x5ff10565516c110180bb9cc111cdbc2b0a68e09ff7fac17290373c3aa4a1bb03, false, 0x0000000000000000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000000000000, false), (0x29ced945BB6A5acc52d2A29C7c7e8E5f84Cf299d, 0x5ff10565516c110180bb9cc111cdbc2b0a68e09ff7fac17290373c3aa4a1bb03, true, 0x0000000000000000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000000000001, false)], 1, 1, 1)]
+    └─ ← [Revert] panic: assertion failed (0x01)
+
+Backtrace:
+  at Bank.deposit
+  at BankTest.test_deposit_not_revert_int_or_ext_violation
+
+Suite result: FAILED. 0 passed; 1 failed; 0 skipped; finished in 2.42ms (507.29µs CPU time)
+
+Ran 1 test suite in 48.82ms (2.42ms CPU time): 0 tests passed, 1 failed, 0 skipped (1 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/gpt-5_dsl_zeroshot_deposit-not-revert-int-or-ext_2_test.t.sol:BankTest
+[FAIL: panic: assertion failed (0x01)] test_deposit_not_revert_int_or_ext_violation() (gas: 36299)
+
+Encountered a total of 1 failing tests, 0 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test
