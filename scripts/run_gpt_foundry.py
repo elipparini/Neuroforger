@@ -968,6 +968,7 @@ def main():
         else:
             trying_to_solve = True
             iterations = 1
+            iteration_limit_reached = False
             while(trying_to_solve and iterations <= args.iteration_limit):
                 output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model, args)
                 answer, explanation, counterexample = parse_llm_output(output)
@@ -990,6 +991,11 @@ def main():
                         iterations += 1
                         if iterations > args.iteration_limit:
                             print(f"Reached iteration limit ({args.iteration_limit}) for ({prop}, {version}). Not requerying LLM anymore.")
+                            iteration_limit_reached = True
+                            # Convert the outcome to TRUE with a concise explanation and clear PoC
+                            result_entry["llm_answer"] = "TRUE"
+                            result_entry["llm_explanation"] = f"Reached iteration limit ({args.iteration_limit}) without being able to find a PoC"
+                            result_entry["llm_counterexample"] = ""
                             break
                         else:
                             print(f"Requerying LLM with forge output as hint (iteration num. {iterations})")
@@ -1039,6 +1045,11 @@ def main():
                                 iterations += 1
                                 if iterations > args.iteration_limit:
                                     print(f"Reached iteration limit ({args.iteration_limit}) for ({prop}, {version}). Not requerying LLM anymore.")
+                                    iteration_limit_reached = True
+                                    # Convert the outcome to TRUE with a concise explanation and clear PoC
+                                    result_entry["llm_answer"] = "TRUE"
+                                    result_entry["llm_explanation"] = f"Reached iteration limit ({args.iteration_limit}) without being able to find a PoC"
+                                    result_entry["llm_counterexample"] = ""
                                     trying_to_solve = False
                                 else:
                                     print(f"Requerying LLM based on user type check feedback (iteration num. {iterations})")
