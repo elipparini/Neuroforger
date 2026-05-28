@@ -6,21 +6,21 @@
 **/.certora_recent_jobs.json
 **/.zip-output-url.txt
 **/log.txt
-**/llms_results/
+results/
 **/*.log
 
 .vscode/
 contracts/vault/0check.py
-scripts/logs_verification_tasks/old/
-scripts/logs_verification_tasks/verification_tasks_2025-*
-scripts/llms_results/*
-scripts/logs_results/*
+logs/logs_verification_tasks/old/
+logs/logs_verification_tasks/verification_tasks_2025-*
+results/*
+logs/logs_results/*
 contracts/test*
-scripts/logs_merged/*
+logs/logs_merged/*
 contracts/*/gpt-[45].csv
-scripts/openai_api_key.txt
-scripts/openai_api_keyOLD.txt
-scripts/claude_api_key.txt
+openai_api_key.txt
+openai_api_keyOLD.txt
+claude_api_key.txt
 forge_results/*/v*/lib/*
 forge_results/*/v*/out/*
 forge_results/*/v*/README.md
@@ -28,4 +28,4 @@ forge_results/*/v*/foundry.toml
 forge_results/*/v*/cache/*
 contracts/lending-protocol/forge/*
 forge_results/*OLD/*
-scripts/logs_verification_tasks/*
+logs/logs_verification_tasks/*

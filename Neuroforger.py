@@ -14,10 +14,12 @@ import csv
 import shutil
 import difflib
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # root del progetto
-SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # root del progetto
+PROMPT_TEMPLATES_DIR = os.path.join(BASE_DIR, "prompt_templates")
 CONTRACTS_DIR = os.path.join(BASE_DIR, "contracts")
-API_KEY_FILE = os.path.join(SCRIPTS_DIR, "openai_api_key.txt")
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
+API_KEY_FILE = os.path.join(BASE_DIR, "openai_api_key.txt")
 
 #FORGE_PATH = "/home/server/foundry/forge" 
 FORGE_PATH = "/home/enrico/.foundry/bin/forge"
@@ -264,7 +266,7 @@ def load_property_description(contract, property_name):
     return props[property_name]
 
 def get_prompt_template(prompt_file):
-    prompt_path = os.path.join(SCRIPTS_DIR, f"{prompt_file}")
+    prompt_path = os.path.join(BASE_DIR, f"{prompt_file}")
     if not os.path.exists(prompt_path):
         print(f"Error: prompt file {prompt_path} not found.", file=sys.stderr)
         sys.exit(1)
@@ -296,7 +298,7 @@ def run_experiment(contract, prop, version, prompt_template, token_limit, model,
     # Load prompt
     if args.produce_poc:
         prompt_file = args.prompt_poc
-        prompt_path = os.path.join(SCRIPTS_DIR, f"{prompt_file}")
+        prompt_path = os.path.join(BASE_DIR, f"{prompt_file}")
         if not os.path.exists(prompt_path):
             print(f"Error: prompt file {prompt_path} non found.", file=sys.stderr)
             sys.exit(1)
@@ -317,7 +319,7 @@ def run_experiment(contract, prop, version, prompt_template, token_limit, model,
         explanation = previous_result["llm_explanation"] 
         counterexample = previous_result["llm_counterexample"] 
         prompt_text = prompt_template.replace("{code}", code).replace("{property_desc}", property_desc).replace("{explanation}", explanation).replace("{counterexample}", counterexample)
-        with open(f"logs_pocs/poc_{contract}_{prop}_{version}.txt", "w", encoding="utf-8") as f: 
+        with open(os.path.join(LOGS_DIR, "logs_pocs", f"poc_{contract}_{prop}_{version}.txt"), "w", encoding="utf-8") as f: 
             f.write(prompt_text)
     elif args.dsl_foundry:
         foundry_specification_path = os.path.join(CONTRACTS_DIR, contract, f"specs/{prop}.spec")
@@ -401,13 +403,13 @@ def check_all_verification_tasks_have_ground_truth(verification_tasks, ground_tr
             sys.exit(1)
 
 def write_results_to_csv(results, output_file, temp=False):
-    # if folder "llms_results/backup/" does not exist, create it
-    backup_folder = os.path.join("llms_results", "backup")
+    # if folder "results/backup/" does not exist, create it
+    backup_folder = os.path.join(RESULTS_DIR, "backup")
     if not os.path.exists(backup_folder):
         os.makedirs(backup_folder)
 
     if not temp and os.path.exists(output_file):
-        output_file_backup = output_file.replace("llms_results/","llms_results/backup/").replace(".csv", f"_backup_{str(datetime.datetime.now()).replace(' ','_').replace(':','-')}.csv")
+        output_file_backup = os.path.join(backup_folder, os.path.basename(output_file).replace(".csv", f"_backup_{str(datetime.datetime.now()).replace(' ','_').replace(':','-')}.csv"))
         os.rename(output_file, output_file_backup)
         print(f"Backup of existing file saved as {output_file_backup}")
 
@@ -827,7 +829,7 @@ def main():
     parser.add_argument("--contract", required=True, help="Contract name (i.e. name of folder in contracts/)")
     parser.add_argument("--property", help="Property name (optional)")
     parser.add_argument("--version", help="Version number (optional)")
-    parser.add_argument("--prompt", required=True, help="Prompt file (must be in scripts/)")
+    parser.add_argument("--prompt", required=True, help="Prompt file (relative to project root, e.g. prompt_templates/zero_shot.txt)")
     parser.add_argument("--tokens", type=int, default=500, help="Token limit (optional)")
     parser.add_argument("--model", default="gpt-4o", help="Model (default gpt-4o)")
     parser.add_argument("--no_sample", action='store_true', required=False, default=False, help="Disable verification tasks sampling. ")
@@ -835,7 +837,7 @@ def main():
     parser.add_argument("--at_least_n_prop", type=int, default=0, help="Force to pick at least N verification task per property.")
     parser.add_argument("--force_overwrite", action='store_true', required=False, default=False, help="Overwrite verification tasks already present in the results file.")
     parser.add_argument("--produce_poc", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a PoC given a False result.")
-    parser.add_argument("--prompt_poc", required=False, help="Prompt file for PoC (must be in scripts/)")
+    parser.add_argument("--prompt_poc", required=False, help="Prompt file for PoC (relative to project root, e.g. prompt_templates/poc.txt)")
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
     parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
     parser.add_argument("--check_with_foundry",  action='store_true', required=False, default=False, help="Check returned PoC with Foundry.")
@@ -888,10 +890,10 @@ def main():
     ground_truths = get_ground_truths(base_path)
 
     if args.produce_poc:
-        output_file = f"llms_results/results_{args.model_poc}_{args.prompt_poc}_PoCfrom_{args.model_poc}_{args.prompt_poc}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/","")
+        output_file = os.path.join(RESULTS_DIR, f"results_{args.model_poc}_{args.prompt_poc}_PoCfrom_{args.model_poc}_{args.prompt_poc}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/",""))
         print(f"Output file: {output_file}")
         
-        previous_output_file = f"llms_results/results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/","")
+        previous_output_file = os.path.join(RESULTS_DIR, f"results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/",""))
         print(f"Previous output file: {previous_output_file}")
 
         if os.path.exists(previous_output_file):
@@ -901,7 +903,7 @@ def main():
 
         previous_verification_tasks = get_previous_verification_tasks(previous_results)
     else:
-        output_file = f"llms_results/results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/","")
+        output_file = os.path.join(RESULTS_DIR, f"results_{args.model}_{args.prompt}_{args.contract}_{args.tokens}tok.csv".replace(".txt","").replace("prompt_templates/",""))
         print(f"Output file: {output_file}")
 
         if os.path.exists(output_file):
@@ -934,7 +936,7 @@ def main():
 
     #if args.use_csv_verification_tasks:
     #    verification_tasks = get_verification_tasks_from_csv(args.use_csv_verification_tasks)
-    csv_ver_tasks_name = f"logs_verification_tasks/verification_tasks_{str(datetime.datetime.now())}.csv".replace(" ","")
+    csv_ver_tasks_name = os.path.join(LOGS_DIR, "logs_verification_tasks", f"verification_tasks_{str(datetime.datetime.now())}.csv".replace(" ",""))
     save_verification_tasks(verification_tasks, csv_ver_tasks_name)
 
 
@@ -963,7 +965,7 @@ def main():
             output, total_time = run_experiment(contract_folder, prop, version, prompt, args.tokens, args.model_poc, args, previous_result)
             print(f"{output=}, {total_time=}")
             results.append(result_entry)
-            temp_file = f"logs_results/results_temp_{starting_time}.txt"
+            temp_file = os.path.join(LOGS_DIR, "logs_results", f"results_temp_{starting_time}.txt")
             write_results_to_csv(results, temp_file, temp=True)
         else:
             trying_to_solve = True
@@ -1065,7 +1067,7 @@ def main():
                     trying_to_solve = False
 
             results.append(result_entry)
-            temp_file = f"logs_results/results_temp_{starting_time}.txt"
+            temp_file = os.path.join(LOGS_DIR, "logs_results", f"results_temp_{starting_time}.txt")
             write_results_to_csv(results, temp_file, temp=True)
         
 
