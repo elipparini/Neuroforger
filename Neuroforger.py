@@ -17,13 +17,14 @@ import difflib
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # root del progetto
 PROMPT_TEMPLATES_DIR = os.path.join(BASE_DIR, "prompt_templates")
 CONTRACTS_DIR = os.path.join(BASE_DIR, "contracts")
-RESULTS_DIR = os.path.join(BASE_DIR, "results")
-LOGS_DIR = os.path.join(BASE_DIR, "logs")
+EXPERIMENTS_DIR = os.path.join(BASE_DIR, "experiments")
+RESULTS_DIR = os.path.join(EXPERIMENTS_DIR, "results")
+LOGS_DIR = os.path.join(EXPERIMENTS_DIR, "logs")
 API_KEY_FILE = os.path.join(BASE_DIR, "openai_api_key.txt")
 
 #FORGE_PATH = "/home/server/foundry/forge" 
 FORGE_PATH = "/home/enrico/.foundry/bin/forge"
-FORGE_RESULTS_DIR = os.path.join(BASE_DIR, "forge_results")
+FORGE_RESULTS_DIR = os.path.join(EXPERIMENTS_DIR, "forge_results")
 
 REFINED_PROMPT = """You had being given the following prompt:
 BEGIN PREVIOUS PROMPT
