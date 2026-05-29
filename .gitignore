@@ -6,14 +6,16 @@
 **/.certora_recent_jobs.json
 **/.zip-output-url.txt
 **/log.txt
-experiments/results/
 **/*.log
 
 .vscode/
 contracts/vault/0check.py
 experiments/logs/logs_verification_tasks/old/
 experiments/logs/logs_verification_tasks/verification_tasks_2025-*
-experiments/results/*
+!experiments/results/analyze_results.py
+experiments/results/backup/*
+experiments/results/FINAL/*
+experiments/results/old/*
 experiments/logs/logs_results/*
 contracts/test*
 experiments/logs/logs_merged/*
