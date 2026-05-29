@@ -830,8 +830,8 @@ def main():
     parser.add_argument("--contract", required=True, help="Contract name (i.e. name of folder in contracts/)")
     parser.add_argument("--property", help="Property name (optional)")
     parser.add_argument("--version", help="Version number (optional)")
-    parser.add_argument("--prompt", required=True, help="Prompt file (relative to project root, e.g. prompt_templates/zero_shot.txt)")
-    parser.add_argument("--tokens", type=int, default=500, help="Token limit (optional)")
+    parser.add_argument("--prompt", required=False, default="prompt_templates/dsl_zeroshot.txt", help="Prompt file (relative to project root)")
+    parser.add_argument("--tokens", type=int, default=30000, help="Token limit (optional)")
     parser.add_argument("--model", default="gpt-4o", help="Model (default gpt-4o)")
     parser.add_argument("--no_sample", action='store_true', required=False, default=False, help="Disable verification tasks sampling. ")
     parser.add_argument("--use_csv_verification_tasks", required=False, default=False, help="Use verification tasks from a CSV file. ")
@@ -840,10 +840,10 @@ def main():
     parser.add_argument("--produce_poc", action='store_true', required=False, default=False, help="Return a textual query to ask to produce a PoC given a False result.")
     parser.add_argument("--prompt_poc", required=False, help="Prompt file for PoC (relative to project root, e.g. prompt_templates/poc.txt)")
     parser.add_argument("--model_poc", required=False, help="Model to run the PoC prompt")
-    parser.add_argument("--dsl_foundry", action='store_true', required=False, default=False, help="Accept as input a specification written in a custom Foundry-based specification language.")
+    parser.add_argument("--dsl_foundry", action='store_true', required=False, default=True, help="Accept as input a specification written in a custom Foundry-based specification language.")
     parser.add_argument("--check_with_foundry",  action='store_true', required=False, default=False, help="Check returned PoC with Foundry.")
     parser.add_argument("--iteration_limit", type=int, default=3, help="Maximum number of iterations.")
-    parser.add_argument("--type_check", action='store_true', required=False, default=False, help="After forge passes, show a diff between the produced Forge test and the original specification and ask the user to confirm the type check.")
+    parser.add_argument("--no_type_check", action='store_true', required=False, default=False, help="Disable interactive type checking: by default, after forge passes, a diff between the produced Forge test and the original specification is shown and the user is asked to confirm the type check.")
 
 
     args = parser.parse_args()
@@ -853,6 +853,7 @@ def main():
     if args.dsl_foundry:
         args.check_with_foundry = True
 
+    args.type_check = not args.no_type_check
     if args.type_check:
         args.check_with_foundry = True
 
@@ -869,7 +870,7 @@ def main():
 
     if args.version and not args.no_sample:
         args.no_sample = True
-        print("Warning: --no_sample is automatically enabled when --version is specified.")
+        #print("Warning: --no_sample is automatically enabled when --version is specified.")
 
     if not args.model_poc:
         args.model_poc = args.model
